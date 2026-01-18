@@ -1,0 +1,138 @@
+---
+alwaysApply: true
+---
+
+
+# LuminaAl 项目开发规则
+
+# 补充规则
+1. 项目中的界面不能出现中文,都是使用英文.Toast提示语给用户看的也是要英文
+2. 注释需要用中文
+3. 换行 空格 缩进 等都需要符合Xcode的格式化要求, tab按照2个空格缩进
+4. 不需要输出总结文件,例如README.MD
+
+## 📱 项目基本信息
+
+- **项目名称**: LuminaAl
+- **项目类型**: iOS 原生应用（SwiftUI）
+- **最低支持版本**: iOS 16.0+
+- **开发语言**: Swift 5.9+
+- **架构模式**: MVVM
+
+## 🏗️ 架构规范（必须遵守）
+
+### 项目结构
+```
+LuminaAl/
+├── App/              # 应用入口
+├── Views/            # 所有视图页面
+├── ViewModels/       # 所有视图模型
+├── Models/           # 数据模型
+├── Services/         # 业务服务层
+├── Components/       # 可复用组件
+├── Utils/            # 工具类
+└── Resources/        # 资源文件
+```
+
+### MVVM 架构要求
+- **View 层**：保持无状态，只负责 UI 展示，所有状态通过 ViewModel 管理
+- **ViewModel 层**：继承 `ObservableObject`，包含所有业务逻辑，使用 `@Published` 暴露状态
+- **Model 层**：遵循 `Codable` 协议（如需要），清晰的属性定义
+- **Service 层**：处理网络请求、数据持久化、权限管理等
+
+## 🎨 设计系统规范（必须遵守）
+
+### 颜色系统
+- **禁止**在 View 中硬编码颜色值
+- **必须**使用 `Color+Design.swift` 中定义的颜色
+- 支持 Light/Dark 模式
+
+### 字体系统
+- **禁止**在 View 中硬编码字体和字号
+- **必须**使用 `Font+Design.swift` 中定义的字体样式
+- 支持动态类型（Dynamic Type）
+
+### 间距系统
+- **禁止**在 View 中硬编码间距值
+- **必须**使用 `DesignMetrics.swift` 中定义的间距值
+- 遵循 8px/4px 栅格系统
+
+## 💻 SwiftUI 编码规范
+
+### 导航
+- 使用 `NavigationStack`（iOS 16+），**不使用** `NavigationView`
+- 使用 `NavigationPath` 管理导航路径
+
+### 状态管理
+- 合理使用 `@State`、`@Binding`、`@StateObject`、`@ObservedObject`
+- View 中使用 `@StateObject` 创建 ViewModel
+- 子 View 中使用 `@ObservedObject` 接收 ViewModel
+
+### 列表
+- 优先使用 `LazyVStack` / `LazyHStack` 而非 `VStack` / `HStack`
+- 大数据量列表必须使用 `LazyVStack`
+
+### 动画
+- 使用 SwiftUI 原生动画 API
+- 动画应克制、性能友好
+- 避免过度动画影响性能
+
+## 🚫 代码质量要求
+
+### 禁止事项
+- **禁止**使用强制解包（`!`），必须使用 `guard let` 或 `if let`
+- **禁止**使用 `Any` 类型，使用泛型和协议替代
+- **禁止**在 View 中硬编码颜色、字体、间距
+- **禁止**在主线程执行耗时操作
+
+### 必须事项
+- **必须**处理所有可能的错误情况
+- **必须**为异步操作提供加载状态
+- **必须**为空数据提供空状态视图
+- **必须**为所有 View 提供 `#Preview`
+
+## 📦 文件命名规范
+
+- View 文件：`功能名View.swift`（如 `HomeView.swift`）
+- ViewModel 文件：`功能名ViewModel.swift`（如 `HomeViewModel.swift`）
+- Model 文件：`模型名.swift`（如 `ImageModel.swift`）
+- Service 文件：`功能名Service.swift`（如 `APIService.swift`）
+- Component 文件：`组件名.swift`（如 `CustomButton.swift`）
+
+## 🔧 功能实现要求
+
+### 必须实现的功能
+- 错误处理：网络错误、API 错误、数据验证错误
+- 加载状态：页面加载、按钮加载、列表加载更多
+- 空状态：空列表、搜索结果为空、无网络连接
+- 权限处理：相机、相册等权限的请求和处理
+- 用户反馈：Toast 提示、Alert 对话框、Haptic 反馈
+
+### 数据持久化
+- 使用 `UserDefaults` 存储简单配置
+- 使用 `Core Data` 或文件系统存储复杂数据
+- 实现数据缓存机制
+
+## 🎯 性能要求
+
+- 所有网络请求必须异步处理
+- 图片加载必须使用异步和缓存
+- 避免不必要的视图重建
+- 优化内存使用，及时释放不需要的资源
+
+## 📝 注释和文档
+
+- 公共 API 必须添加文档注释
+- 复杂逻辑必须添加行内注释
+- ViewModel 的关键方法应添加注释说明
+
+## ✅ 代码审查检查点
+
+在提交代码前，确保：
+- [ ] 遵循 MVVM 架构
+- [ ] 使用设计系统（颜色、字体、间距）
+- [ ] 没有强制解包
+- [ ] 错误处理完善
+- [ ] 有加载状态和空状态
+- [ ] 有 Preview
+- [ ] 代码可以直接编译运行
